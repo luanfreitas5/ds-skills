@@ -1,0 +1,11 @@
+{
+  "name": "ds-skills",
+  "version": "0.1.0",
+  "description": "Skills de ciência de dados nível sênior: avaliação rigorosa, vazamento, contratos de dados, reprodutibilidade, IA responsável, LGPD, monitoramento e engenharia de projetos.",
+  "author": {
+    "name": "Luan Freitas",
+    "email": "luan.mgf@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["data-science", "machine-learning", "mlops", "responsible-ai", "lgpd"]
+}

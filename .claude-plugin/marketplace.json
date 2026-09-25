@@ -1,0 +1,14 @@
+{
+  "name": "ds-skills-marketplace",
+  "owner": {
+    "name": "Luan Freitas",
+    "email": "luan.mgf@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "ds-skills",
+      "source": "./",
+      "description": "Skills de ciência de dados nível sênior: avaliação rigorosa, vazamento, contratos de dados, reprodutibilidade, IA responsável, LGPD, monitoramento e engenharia de projetos."
+    }
+  ]
+}
