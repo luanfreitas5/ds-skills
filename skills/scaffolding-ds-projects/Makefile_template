@@ -1,0 +1,44 @@
+# Template — atalhos reprodutíveis. `make check` replica o CI localmente.
+.PHONY: install lint format typecheck security test check train reproduce docs clean
+
+install:
+	uv sync --all-groups
+	uv run pre-commit install --hook-type pre-commit --hook-type commit-msg
+
+lint:
+	uv run ruff check src tests
+	uv run ruff format --check src tests
+
+format:
+	uv run ruff check --fix src tests
+	uv run ruff format src tests
+
+typecheck:
+	uv run basedpyright
+
+security:
+	uv run bandit -c pyproject.toml -r src
+	uv run pip-audit
+
+quality:
+	uv run vulture
+	uv run refurb src
+	uv run xenon --max-absolute B --max-modules A --max-average A src
+	uv run interrogate src
+
+test:
+	uv run pytest --cov --cov-report=term-missing
+
+check: lint typecheck security quality test
+
+train:
+	uv run python src/main.py --config configs/config.yaml
+
+reproduce:
+	dvc repro
+
+docs:
+	uv run mkdocs serve
+
+clean:
+	rm -rf .pytest_cache .ruff_cache .coverage htmlcov
