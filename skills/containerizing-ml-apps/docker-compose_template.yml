@@ -1,0 +1,71 @@
+# API + MLflow (tracking e registry) + Postgres (backend store).
+# Segredos vêm do .env (nunca commitado); `docker compose config` valida o arquivo.
+services:
+  db:
+    image: postgres:16.4-bookworm
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?defina POSTGRES_USER no .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+      POSTGRES_DB: mlflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d mlflow"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: docker/mlflow.Dockerfile
+    command:
+      - mlflow
+      - server
+      - --host=0.0.0.0
+      - --port=5000
+      - --backend-store-uri=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/mlflow
+      - --artifacts-destination=/mlartifacts
+      - --serve-artifacts
+      # MLflow >= 3.5 valida o Host: inclua o nome do serviço ou a API recebe 403
+      # - --allowed-hosts=mlflow:5000,localhost:5000
+    volumes:
+      - mlartifacts:/mlartifacts
+    ports:
+      - "127.0.0.1:5000:5000" # só na máquina local; nunca 0.0.0.0 sem autenticação
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health', timeout=4)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+  api:
+    build: .
+    image: churn-api:${API_VERSION:-dev}
+    environment:
+      # Arquivo montado (padrão) ou alias do registry: models:/churn@champion
+      MODEL_URI: ${MODEL_URI:-/models/churn_pipeline.joblib}
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    volumes:
+      - ./models:/models:ro # modelo fora da imagem, somente leitura
+    ports:
+      - "127.0.0.1:8000:8000"
+    read_only: true # sistema de arquivos imutável; /tmp em memória
+    tmpfs:
+      - /tmp
+    # Só quando MODEL_URI=models:/...: a API precisa do registry para subir.
+    # Com arquivo montado, a API não deve esperar o MLflow.
+    # depends_on:
+    #   mlflow:
+    #     condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  mlartifacts:

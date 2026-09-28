@@ -1,0 +1,50 @@
+# syntax=docker/dockerfile:1.7
+# Imagem da API: código + dependências travadas. O modelo NÃO entra aqui:
+# vem de MODEL_URI (volume somente leitura ou MLflow Registry) em tempo de execução.
+# Fixe as tags por patch; em produção acrescente @sha256:<digest>
+# (obtido com `docker buildx imagetools inspect <imagem>:<tag>`). Mesma tag nos dois estágios.
+
+# ---------- Estágio 1: binário do uv, versão fixa ----------
+FROM ghcr.io/astral-sh/uv:0.8.15 AS uv
+
+# ---------- Estágio 2: resolve o ambiente a partir do uv.lock ----------
+FROM python:3.12.11-slim-bookworm AS builder
+COPY --from=uv /uv /usr/local/bin/uv
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=0
+WORKDIR /app
+# Só os manifestos: esta camada fica em cache até o lock mudar.
+# --locked falha se o uv.lock estiver desatualizado em relação ao pyproject.toml.
+# --no-dev (e --no-group train, se existir) mantém fora ferramentas e libs de treino.
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    uv sync --locked --no-dev --no-install-project
+
+# ---------- Estágio 3: runtime enxuto, sem uv, sem compiladores ----------
+FROM python:3.12.11-slim-bookworm AS runtime
+# libgomp1: runtime OpenMP exigido por xgboost/lightgbm; ausente na imagem slim.
+# A versão do pacote segue a da imagem base fixada acima.
+# hadolint ignore=DL3008
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system --gid 10001 app \
+    && useradd --system --uid 10001 --gid app --no-create-home --shell /usr/sbin/nologin app
+WORKDIR /app
+# Código e venv pertencem ao root: o usuário da aplicação só lê
+COPY --from=builder /app/.venv /app/.venv
+COPY src/ src/
+COPY app/ app/
+COPY configs/ configs/
+ENV PATH="/app/.venv/bin:${PATH}" \
+    PYTHONPATH="/app/src:/app" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    MODEL_URI="/models/churn_pipeline.joblib"
+USER app:app
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4)"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

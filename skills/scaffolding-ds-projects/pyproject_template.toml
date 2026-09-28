@@ -7,7 +7,7 @@ version = "0.1.0"
 description = "Descrição curta do projeto"
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "numpy>=2.0",
     "polars>=1.9",
@@ -50,7 +50,7 @@ default-groups = ["dev"]
 # ---------------- ruff ----------------
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+target-version = "py311"
 src = ["src", "tests"]
 
 [tool.ruff.lint]
@@ -67,7 +67,7 @@ convention = "numpy"
 [tool.basedpyright]
 include = ["src", "tests"]
 extraPaths = ["src"]
-pythonVersion = "3.10"
+pythonVersion = "3.11"
 typeCheckingMode = "standard"
 
 # ---------------- pytest ----------------
