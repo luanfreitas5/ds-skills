@@ -1,6 +1,6 @@
 # 🧪 ds-skills — Skills de Ciência de Dados para Claude Code
 
-![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-47-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-48-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
@@ -57,6 +57,7 @@ Cada skill foi escrita seguindo TDD para documentação: um cenário de pressão
 |  | [`writing-conventional-commits`](skills/writing-conventional-commits/SKILL.md) | Commitar, preparar release ou gerar CHANGELOG; commit "update" misturando dado, modelo e refatoração |
 |  | [`writing-portfolio-readmes`](skills/writing-portfolio-readmes/SKILL.md) | README de portfólio ou de artigo; pedido de "listar as tecnologias", badges, instalação |
 |  | [`type-checking-with-basedpyright`](skills/type-checking-with-basedpyright/SKILL.md) | Configurar checagem de tipos; erros de tipo com pandas/polars/numpy; vontade de usar `# type: ignore` ou `Any` |
+|  | [`fixing-python-warnings`](skills/fixing-python-warnings/SKILL.md) | `FutureWarning`, `DeprecationWarning`, `RuntimeWarning` ou `ConvergenceWarning` no log/pytest; pedido de "sumir com os warnings"; vontade de usar `filterwarnings("ignore")` ou `np.errstate` |
 
 ## 🚀 Instalação
 
