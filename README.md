@@ -72,7 +72,7 @@ Ou como skills pessoais: copie as pastas de `skills/` para `~/.claude/skills/`.
 ## 🗂️ Estrutura
 
 ```
-claude-skills/
+ds-skills/
 ├── .claude-plugin/
 │   ├── plugin.json
 │   └── marketplace.json
