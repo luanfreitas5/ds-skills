@@ -1,23 +1,33 @@
 ---
 name: ingesting-external-data
-description: Use when writing code that downloads data from a REST API, database, website, or public data portal into data/raw, when a download script runs on a schedule (cron, Airflow), or when told the downloader is "quick", "just a script", or that it can simply overwrite the previous file.
+description: Use when writing code that downloads data from a REST API, database, website, or public data portal into data/bronze (Medallion Architecture), when a download script runs on a schedule (cron, Airflow), or when told the downloader is "quick", "just a script", or that it can simply overwrite the previous file.
 ---
 
 # Ingesting External Data
 
 ## Overview
 
-`data/raw/` is the only copy of what the source said *at that moment*. Sources change, delete rows, and go offline. **Core principle:** every download is a new, immutable, dated snapshot of the bytes as received, with a manifest (hashes, license, request) — and the client is polite and resilient: timeout, retry with backoff, rate limit, bounded pagination.
+`data/bronze/` (Medallion layer 1) is the only copy of what the source said *at that moment*. Sources change, delete rows, and go offline. **Core principle:** every download is a new, immutable, dated snapshot of the bytes as received, with a manifest (hashes, license, request) — and the client is polite and resilient: timeout, retry with backoff, rate limit, bounded pagination.
 
-A weekly job that writes `data/raw/ocorrencias.parquet` destroys last week's data every week. Atomic replace (`.tmp` + rename) protects against *partial* writes, not against *overwriting* — the old snapshot is still gone, and last month's model can no longer be reproduced.
+A weekly job that writes `data/bronze/ocorrencias.parquet` destroys last week's data every week. Atomic replace (`.tmp` + rename) protects against *partial* writes, not against *overwriting* — the old snapshot is still gone, and last month's model can no longer be reproduced.
+
+## Medallion layers in `data/`
+
+| Layer | Content | Ingestion's role |
+|---|---|---|
+| `bronze/` | Bytes as received, one dated snapshot per source + manifest. Immutable. | **This skill writes here, and only here** (external sources land in `bronze/<source>/`) |
+| `silver/` | Parsed, typed, deduplicated, schema-validated (parquet) | Downstream: read latest bronze snapshot → clean → validate |
+| `gold/` | Curated, model/business-ready (features, aggregates, splits) | Never written by ingestion |
+
+Data only flows forward (bronze → silver → gold); never write back to a previous layer.
 
 ## Rules
 
 | Rule | How | Missing it causes |
 |---|---|---|
-| Raw is immutable | `raw/<source>/<collected_at UTC>/`; `FileExistsError` if it exists | Training data changes silently between runs |
+| Bronze is immutable | `bronze/<source>/<collected_at UTC>/`; `FileExistsError` if it exists | Training data changes silently between runs |
 | Collection date in the path | `%Y-%m-%dT%H%M%SZ` from `datetime.now(timezone.utc)` | "Which week's data trained this model?" |
-| Store bytes as received | Write `response.content` (JSON/CSV/HTML) — convert to parquet in `interim/` | Parse/type-inference bugs baked into "raw" |
+| Store bytes as received | Write `response.content` (JSON/CSV/HTML) — convert to parquet in `silver/` | Parse/type-inference bugs baked into "bronze" |
 | Complete or nothing | Write to `<dir>.partial/`, rename only after the last page + manifest | Half-downloaded snapshot looks valid |
 | Timeout on every request | `httpx.Timeout(30, connect=10)` | Cron job hangs forever |
 | Retry transient only | 429, 5xx, transport errors; exponential backoff + jitter; honor `Retry-After`; fail fast on other 4xx | Hammering a down API, or retrying a 401 forever |
@@ -91,10 +101,10 @@ def compute_sha256(path: Path) -> str:
 
 
 def download_snapshot(
-    url: str, raw_root: Path, source: str, license_id: str, terms_url: str,
+    url: str, bronze_root: Path, source: str, license_id: str, terms_url: str,
     per_page: int = 500, min_interval: float = 1.0, max_pages: int = 10_000,
 ) -> Path:
-    """Baixa todas as páginas para um snapshot imutável em raw/<fonte>/<data de coleta>/.
+    """Baixa todas as páginas para um snapshot imutável em bronze/<fonte>/<data de coleta>/.
 
     Grava as respostas exatamente como recebidas + manifest.json (hashes, licença).
     O diretório só ganha o nome final se o download inteiro terminar.
@@ -102,13 +112,13 @@ def download_snapshot(
     Raises
     ------
     FileExistsError
-        Se o snapshot já existir — raw nunca é sobrescrito.
+        Se o snapshot já existir — bronze nunca é sobrescrito.
     """
     collected_at = datetime.now(timezone.utc)
-    final_dir = raw_root / source / collected_at.strftime("%Y-%m-%dT%H%M%SZ")
+    final_dir = bronze_root / source / collected_at.strftime("%Y-%m-%dT%H%M%SZ")
     tmp_dir = final_dir.with_name(final_dir.name + ".partial")
     if final_dir.exists():
-        raise FileExistsError(f"Snapshot já existe, raw é imutável: {final_dir}")
+        raise FileExistsError(f"Snapshot já existe, bronze é imutável: {final_dir}")
     tmp_dir.mkdir(parents=True, exist_ok=False)
 
     files, n_records, page, last_call = [], 0, 1, 0.0
@@ -142,7 +152,7 @@ def download_snapshot(
     return final_dir
 ```
 
-Downstream: read the *latest complete* snapshot (`sorted(raw_root.glob(f"{source}/*Z"))[-1]` — skips `.partial`), verify hashes against its manifest, then parse + validate into `interim/`. Record the snapshot path and manifest hash in the run manifest (REQUIRED SUB-SKILL: ensuring-reproducibility). Validate the parsed data at the raw → interim boundary (REQUIRED SUB-SKILL: validating-data-contracts).
+Downstream: read the *latest complete* snapshot (`sorted(bronze_root.glob(f"{source}/*Z"))[-1]` — skips `.partial`), verify hashes against its manifest, then parse + validate into `silver/`. Record the snapshot path and manifest hash in the run manifest (REQUIRED SUB-SKILL: ensuring-reproducibility). Validate the parsed data at the bronze → silver boundary (REQUIRED SUB-SKILL: validating-data-contracts).
 
 Credentials (API keys, DB passwords) come from `.env` via `pydantic-settings` — never in the URL stored in the manifest or in logs.
 
@@ -154,7 +164,7 @@ Credentials (API keys, DB passwords) come from `.env` via `pydantic-settings` �
 | "Atomic replace keeps last week's data safe" | It keeps *a* file intact; it still deletes the previous snapshot. |
 | "`urllib3.Retry` on 429 is enough rate limiting" | That is reactive. Space requests proactively; retry is the backup. |
 | "It's public data, license doesn't matter" | Public ≠ open license. Record it; papers and portfolios need it. |
-| "Saving parquet in raw is more convenient" | Convert in `interim/`; raw keeps the source's bytes so parsing bugs are fixable. |
+| "Saving parquet in bronze is more convenient" | Convert in `silver/`; bronze keeps the source's bytes so parsing bugs are fixable. |
 | "Storage is expensive, keep only the latest" | Compress or prune by policy — never by overwriting. Use DVC for large snapshots. |
 
 ## Common Mistakes

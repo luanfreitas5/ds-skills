@@ -15,7 +15,7 @@ Git LFS stores big blobs but knows nothing about lineage: it cannot tell that `x
 |---|---|
 | Start | `dvc init` → commit `.dvc/`, `.dvcignore` |
 | Remote (S3/GCS/Azure/SSH/local) | `dvc remote add -d storage s3://bucket/project` → commit `.dvc/config` |
-| Track a **source** file (raw, external) | `dvc add data/raw/vendas.csv` → commit `vendas.csv.dvc` |
+| Track a **source** file (bronze — raw and external sources) | `dvc add data/bronze/vendas.csv` → commit `vendas.csv.dvc` |
 | Track a **generated** file | Declare it as a stage `out` in `dvc.yaml` — never `dvc add` it |
 | Run pipeline (only stale stages) | `dvc repro` → commit `dvc.lock` |
 | Share content | `dvc push` **before** `git push` |
@@ -30,11 +30,11 @@ Git LFS stores big blobs but knows nothing about lineage: it cannot tell that `x
 stages:
   prepare:
     cmd: python src/data/prepare.py
-    deps: [src/data/prepare.py, data/raw/vendas.csv]
-    outs: [data/processed/train.parquet, data/processed/test.parquet]
+    deps: [src/data/prepare.py, data/bronze/vendas.csv]
+    outs: [data/gold/train.parquet, data/gold/test.parquet]
   train:
     cmd: python src/models/train.py
-    deps: [src/models/train.py, data/processed/train.parquet]
+    deps: [src/models/train.py, data/gold/train.parquet]
     params:
       - configs/model_params.yaml:
           - seed
@@ -43,7 +43,7 @@ stages:
     outs: [models/xgb.joblib]
   evaluate:
     cmd: python src/models/evaluate.py
-    deps: [src/models/evaluate.py, models/xgb.joblib, data/processed/test.parquet]
+    deps: [src/models/evaluate.py, models/xgb.joblib, data/gold/test.parquet]
     metrics:
       - reports/metrics.json:
           cache: false

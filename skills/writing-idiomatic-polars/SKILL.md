@@ -65,7 +65,7 @@ def build_customer_summary(path: str) -> pl.LazyFrame:
     )
 
 
-# build_customer_summary("data/raw/transacoes.parquet").sink_parquet("data/processed/resumo.parquet")
+# build_customer_summary("data/silver/transacoes.parquet").sink_parquet("data/gold/resumo.parquet")
 ```
 
 Validate the output at the stage boundary (REQUIRED SUB-SKILL: validating-data-contracts).

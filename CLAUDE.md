@@ -97,10 +97,9 @@ project/
 │   └── ...                 # Add more as needed, but keep organized and modular
 │
 ├── data/              # All data files, organized by stage - REQUIRED (tracked by DVC, not Git)
-│   ├── raw/           # Original data — never modify. All downloaded data should be pasted here.
-│   ├── external/      # Data from external sources (if applicable)
-│   ├── interim/       # Transformed intermediate data (if applicable)
-│   └── processed/     # Final data ready for modeling
+│   ├── bronze/        # Medallion layer 1: data exactly as received (immutable, dated snapshots per source + manifest). Never modify. All downloaded/external data lands here.
+│   ├── silver/        # Medallion layer 2: cleaned, typed, deduplicated and schema-validated data (e.g., parquet)
+│   └── gold/          # Medallion layer 3: curated, business/model-ready data (features, aggregates, train/test sets)
 │
 ├── notebooks/         # Exploration and reports (prefixed: 01_, 02_...) - OPTIONAL, but recommended for EDA and final reporting
 │
@@ -135,7 +134,7 @@ project/
 │   |
 │   ├── preprocessing/              # Data cleaning, transformation, and feature engineering - OPTIONAL, but recommended for complex projects. File Examples:
 │   |   ├── __init__.py             # Docstring describing purpose and main modules/functions/classes
-│   |   ├── cleaning.py             # Cleans raw data (missing values, duplicates, outliers)
+│   |   ├── cleaning.py             # Cleans bronze data into silver (missing values, duplicates, outliers)
 │   |   ├── encoding.py             # Encodes categorical variables
 │   |   ├── scaling.py              # Scales numerical features
 │   |   ├── normalization.py        # Normalizes numerical features
@@ -147,7 +146,7 @@ project/
 │   ├── features/                   # Feature engineering, extraction, and selection - OPTIONAL, but recommended for complex projects
 │   |   ├── __init__.py             # Docstring describing purpose and main modules/functions/classes
 │   |   ├── engineering.py          # Creates new features from existing ones
-│   |   ├── extraction.py           # Extracts features from raw data
+│   |   ├── extraction.py           # Extracts features from silver data into gold
 │   |   ├── selection.py            # Selects relevant features for modeling
 │   |   ├── importance.py           # Evaluates feature importance
 │   |   ├── generation.py           # Generates new features through domain knowledge
@@ -331,7 +330,7 @@ project/
 ├── docker-compose.yml # For orchestrating services - OPTIONAL, but recommended if using multiple services (e.g., database, MLflow server)
 ├── .pre-commit-config.yaml # Fast checks before every commit - REQUIRED
 ├── .env.example       # Example of necessary environment variables: only secret variables, such as API keys/login and passwords/cookies (do not commit the actual .env file and do not put API keys in configs) - OPTIONAL, but recommended for projects with external dependencies
-├── .gitignore         # Ignore .env, data/raw, models, logs, and other large or sensitive files, customize as needed - REQUIRED
+├── .gitignore         # Ignore .env, data/bronze, data/silver, data/gold, models, logs, and other large or sensitive files, customize as needed - REQUIRED
 ├── .gitattributes      # Ensure consistent line endings and text encoding across platforms - REQUIRED
 ├── CHANGELOG.md       # Keep a Changelog format, updated on every release - REQUIRED
 ├── LICENSE            # MIT License - REQUIRED
@@ -368,7 +367,7 @@ project/
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA_RAW = ROOT / "data" / "raw"
+DATA_BRONZE = ROOT / "data" / "bronze"
 ```
 
 ---
@@ -484,7 +483,7 @@ except FileNotFoundError as e:
 
 ## Data Contracts (validation)
 
-Validate data — not only code — at every stage boundary (`raw → interim → processed`, and model input/output). Use `pandera` schemas as explicit, version-controlled data contracts. Fail early with a clear error instead of propagating silent corruption.
+Validate data — not only code — at every stage boundary (`bronze → silver → gold`, and model input/output). Use `pandera` schemas as explicit, version-controlled data contracts. Fail early with a clear error instead of propagating silent corruption.
 
 - Define one schema per dataset stage under `src/schemas/`
 - Validate at the **entry and exit** of each pipeline step
@@ -783,12 +782,12 @@ Code is versioned in Git; **data and models are not**. Use DVC + the MLflow Mode
 - **DVC** tracks `data/` and `models/` (pointers in Git, content in remote storage); define reproducible pipeline stages in `dvc.yaml`
 - **MLflow Tracking** logs params, metrics, and artifacts per run, tagged with the Git SHA and the dataset hash
 - **MLflow Model Registry** promotes models through stages (Staging → Production) — use the Registry, not just loose `joblib` files
-- `.gitignore` excludes raw data, models, and logs; DVC handles their storage
+- `.gitignore` excludes data layers (bronze/silver/gold), models, and logs; DVC handles their storage
 
 ```bash
 # Versionar dados grandes sem inflar o Git
-dvc add data/raw/transacoes.parquet
-git add data/raw/transacoes.parquet.dvc .gitignore
+dvc add data/bronze/transacoes
+git add data/bronze/transacoes.dvc .gitignore
 dvc push   # envia o conteúdo para o remote (S3, GDrive, etc.)
 ```
 
@@ -893,7 +892,7 @@ import polars as pl
 
 # Lazy: o otimizador planeja filtros/seleções antes de materializar
 resultado = (
-    pl.scan_parquet("data/processed/transacoes.parquet")
+    pl.scan_parquet("data/gold/transacoes.parquet")
     .filter(pl.col("valor") > 0)
     .group_by("regiao")
     .agg(pl.col("valor").mean().alias("ticket_medio"))
@@ -931,7 +930,7 @@ fig.savefig("reports/figures/receita_por_regiao.png", dpi=300)
 
 ## What to Avoid
 
-- Modifying raw data — always read, transform, write elsewhere
+- Modifying bronze data — always read, transform, write to the next layer (silver → gold)
 - Hardcoded paths or credentials — use `pathlib` + `.env`
 - Silent failures — raise meaningful exceptions in pt-BR
 - Production logic in notebooks

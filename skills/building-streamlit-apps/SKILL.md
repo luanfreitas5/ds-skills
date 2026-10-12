@@ -33,7 +33,7 @@ from pathlib import Path
 import polars as pl
 import streamlit as st
 
-DATA = Path("data/processed/churn_dashboard.parquet")  # sem nome/CPF/e-mail
+DATA = Path("data/gold/churn_dashboard.parquet")  # sem nome/CPF/e-mail
 
 
 @st.cache_data(ttl="1h", max_entries=64)

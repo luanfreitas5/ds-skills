@@ -13,7 +13,7 @@ Copying cells into `.py` files keeps every notebook problem — globals, hidden 
 
 1. **Freeze a golden output.** Run the notebook as-is on a small fixed sample (or synthetic data with the same schema); save the intermediate frames and final outputs to `tests/fixtures/golden_*.parquet`. Seed anything random.
 2. **Extract pure functions**, one per cell responsibility: input → output, no globals, no I/O, no `print`. Type hints + NumPy docstring in pt-BR. Magic numbers (`2024`, `0.9`, `0.3`) become parameters.
-3. **I/O only at the edges.** `load_*` / `save_*` in `data/` modules; paths come from `configs/paths.yaml` relative to the project root, never the author's desktop (raw input → `data/raw/`, outputs → `data/processed/`, models → `models/`).
+3. **I/O only at the edges.** `load_*` / `save_*` in `data/` modules; paths come from `configs/paths.yaml` relative to the project root, never the author's desktop (raw input → `data/bronze/`, cleaned → `data/silver/`, model-ready outputs → `data/gold/`, models → `models/`).
 4. **Equivalence test:** new functions on the golden input must equal the golden output (`assert_frame_equal`, explicit tolerance for floats).
 5. **Notebook becomes a thin client:** `from features.engineering import build_features`; cells only call functions and display results. Strip outputs (`nbstripout`).
 6. **Then fix behavior**, each fix its own commit that updates the golden file on purpose and says why (e.g. "quantile now fit on train only — removes leakage"). A fix hidden inside the refactor makes the equivalence test meaningless.

@@ -1,6 +1,6 @@
 ---
 name: validating-data-contracts
-description: Use when writing any function that reads, cleans, transforms, or writes a dataset between pipeline stages (raw → interim → processed), when serving a model that receives external input, or when told the data "is clean", "was checked in Excel", or that validation is "over-engineering".
+description: Use when writing any function that reads, cleans, transforms, or writes a dataset between pipeline stages (bronze → silver → gold), when serving a model that receives external input, or when told the data "is clean", "was checked in Excel", or that validation is "over-engineering".
 ---
 
 # Validating Data Contracts
@@ -18,9 +18,9 @@ For every stage function:
 1. **Validate input** against the upstream schema (fail fast, `lazy=True` to report all errors at once).
 2. **Transform**, logging counts of rows removed per rule — never silent `dropna()`.
 3. **Validate output** against this stage's schema before writing.
-4. **Write** to the next stage directory; never overwrite `data/raw/`.
+4. **Write** to the next stage directory; never overwrite `data/bronze/`.
 
-Schemas live in `src/schemas/` — one per stage. Ranges and category sets come from the data dictionary or the user; when unknown, derive them from a profile of the raw data (`df.describe()`, `unique()`), state them as assumptions in your reply, and mark them `# TODO: confirmar domínio`. The minimal-code request still gets the schema; drop logging config, argparse, or MLflow before dropping the contract.
+Schemas live in `src/schemas/` — one per stage. Ranges and category sets come from the data dictionary or the user; when unknown, derive them from a profile of the bronze data (`df.describe()`, `unique()`), state them as assumptions in your reply, and mark them `# TODO: confirmar domínio`. The minimal-code request still gets the schema; drop logging config, argparse, or MLflow before dropping the contract.
 
 ## What a Schema Must Check
 
@@ -47,7 +47,7 @@ import polars as pl
 logger = logging.getLogger(__name__)
 
 
-class TransactionsProcessedSchema(pa.DataFrameModel):
+class TransactionsSilverSchema(pa.DataFrameModel):
     """Contrato de dados para transações prontas para modelagem."""
 
     transaction_id: str = pa.Field(unique=True, nullable=False)
@@ -61,13 +61,13 @@ class TransactionsProcessedSchema(pa.DataFrameModel):
         strict = True
 
 
-def clean_transactions(raw_path: Path, processed_path: Path) -> pl.DataFrame:
+def clean_transactions(bronze_path: Path, silver_path: Path) -> pl.DataFrame:
     """Limpa transações brutas e grava o resultado validado em parquet."""
-    df = pl.read_csv(raw_path, try_parse_dates=True)
-    n_raw = df.height
+    df = pl.read_csv(bronze_path, try_parse_dates=True)
+    n_bronze = df.height
 
     df = df.unique(subset="transaction_id", keep="first")
-    logger.info(f"Duplicatas removidas: {n_raw - df.height}")
+    logger.info(f"Duplicatas removidas: {n_bronze - df.height}")
 
     n_before = df.height
     df = df.drop_nulls(subset=["transaction_id", "customer_id", "amount", "is_fraud"])
@@ -75,10 +75,10 @@ def clean_transactions(raw_path: Path, processed_path: Path) -> pl.DataFrame:
 
     df = df.with_columns(pl.col("region").str.strip_chars().str.to_lowercase())
 
-    validated = TransactionsProcessedSchema.validate(df, lazy=True)
-    processed_path.parent.mkdir(parents=True, exist_ok=True)
-    validated.write_parquet(processed_path)
-    logger.info(f"{validated.height}/{n_raw} linhas válidas gravadas em {processed_path}")
+    validated = TransactionsSilverSchema.validate(df, lazy=True)
+    silver_path.parent.mkdir(parents=True, exist_ok=True)
+    validated.write_parquet(silver_path)
+    logger.info(f"{validated.height}/{n_bronze} linhas válidas gravadas em {silver_path}")
     return validated
 ```
 

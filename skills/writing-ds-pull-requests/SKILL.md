@@ -42,7 +42,7 @@ When the PR changes cleaning or filters, main and the branch produce **different
 ```bash
 git worktree add ../main-wt main && (cd ../main-wt && python -m src.main --stage process)
 python -m src.main --stage process
-python summarize_data_change.py ../main-wt/data/processed/train.parquet data/processed/train.parquet \
+python summarize_data_change.py ../main-wt/data/gold/train.parquet data/gold/train.parquet \
     --target churn --key customer_id 2>/dev/null >> pr_body.md
 ```
 
