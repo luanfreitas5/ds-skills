@@ -386,7 +386,7 @@ DATA_BRONZE = ROOT / "data" / "bronze"
 | LLMs & Agents | `langchain`, `agno`, `ollama` (if applicable) |
 | Configuration & validation | `pydantic` + `pydantic-settings` + `yaml` + `argparse` (or `hydra` for complex configs) |
 | Environment variables | `python-dotenv` |
-| Experiment tracking & registry | `mlflow` (tracking + Model Registry) |
+| Experiment tracking & registry | `mlflow` (tracking + Model Registry) with a **SQLite backend** (`sqlite:///mlruns/mlflow.db`); never the file store (`./mlruns`), which is in maintenance mode |
 | Data & pipeline versioning | `dvc` (if applicable) |
 | Model & data monitoring | `evidently` (if applicable, for deployed models) |
 | Fairness / bias auditing | `fairlearn` (if applicable) |
@@ -781,6 +781,7 @@ Code is versioned in Git; **data and models are not**. Use DVC + the MLflow Mode
 
 - **DVC** tracks `data/` and `models/` (pointers in Git, content in remote storage); define reproducible pipeline stages in `dvc.yaml`
 - **MLflow Tracking** logs params, metrics, and artifacts per run, tagged with the Git SHA and the dataset hash
+- **MLflow backend:** always a database, never the file store (`./mlruns`, maintenance mode). Default to `sqlite:///mlruns/mlflow.db` (set `experiment.tracking_uri` in `configs/config.yaml`, `registry_uri` in `configs/deploy.yaml`, `MLFLOW_TRACKING_URI` in `.env.example`, `--backend-store-uri` in Makefile/docker-compose); call `mlflow.set_tracking_uri(...)` explicitly instead of relying on the default. Migrate old runs with `mlflow migrate-filestore`
 - **MLflow Model Registry** promotes models through stages (Staging → Production) — use the Registry, not just loose `joblib` files
 - `.gitignore` excludes data layers (bronze/silver/gold), models, and logs; DVC handles their storage
 

@@ -27,7 +27,7 @@ Cada skill foi escrita seguindo TDD para documentação: um cenário de pressão
 |  | [`writing-idiomatic-polars`](skills/writing-idiomatic-polars/SKILL.md) | Código polars, migração de pandas, dados maiores que a RAM |
 |  | [`versioning-data-with-dvc`](skills/versioning-data-with-dvc/SKILL.md) | Versionar dados/modelos; alguém quer commitar `.parquet` ou `.joblib` |
 |  | [`configuring-typed-settings`](skills/configuring-typed-settings/SKILL.md) | Configs YAML, argparse, `.env`; hiperparâmetro ou chave nova |
-|  | [`ingesting-external-data`](skills/ingesting-external-data/SKILL.md) | Baixar dados de APIs, bancos ou sites para `data/raw`; jobs de coleta agendados |
+|  | [`ingesting-external-data`](skills/ingesting-external-data/SKILL.md) | Baixar dados de APIs, bancos ou sites para `data/bronze` (Medallion); jobs de coleta agendados |
 |  | [`running-structured-eda`](skills/running-structured-eda/SKILL.md) | Primeira exploração de dataset novo (`01_eda.ipynb`); "EDA padrão" de `describe()` e histogramas |
 |  | [`optimizing-sql-queries`](skills/optimizing-sql-queries/SKILL.md) | Consulta lenta ou cara no warehouse; antes de criar índice, partição ou clustering |
 |  | [`querying-with-duckdb`](skills/querying-with-duckdb/SKILL.md) | Análise local sobre Parquet/CSV grandes; pandas não cabe na memória; DuckDB × polars lazy |

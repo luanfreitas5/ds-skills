@@ -13,6 +13,7 @@ A run that logs only the final metric answers "what score?" but not "from which 
 
 | Element | How | Why |
 |---|---|---|
+| Backend SQLite | `mlflow.set_tracking_uri("sqlite:///mlruns/mlflow.db")` called explicitly; URI from `experiment.tracking_uri` in `configs/config.yaml` / `MLFLOW_TRACKING_URI` in `.env.example`. Never the `./mlruns` file store (maintenance mode) | File store is deprecated and has no Registry support; old runs: `mlflow migrate-filestore` |
 | Tags `git_sha`, `data_hash`, `seed` | `mlflow.start_run(tags=...)` on parent **and** children | Filter/compare runs by code and data version |
 | Refuse dirty tree | `git status --porcelain` non-empty → raise | SHA of a dirty tree lies |
 | Params | `model.get_params()` + CV setup (`n_splits`, split strategy) | Diff runs in the UI |
@@ -56,9 +57,17 @@ def compute_file_hash(path: Path) -> str:
 
 
 def run_cv_experiment(
-    name: str, model: ClassifierMixin, X: pd.DataFrame, y: pd.Series, data_path: Path, seed: int = 42
+    name: str,
+    model: ClassifierMixin,
+    X: pd.DataFrame,
+    y: pd.Series,
+    data_path: Path,
+    seed: int = 42,
+    tracking_uri: str = "sqlite:///mlruns/mlflow.db",
 ) -> float:
     """Executa CV estratificada com um run pai por modelo e um run filho por fold."""
+    Path("mlruns").mkdir(exist_ok=True)
+    mlflow.set_tracking_uri(tracking_uri)  # explícito: nunca depender do padrão (file store)
     tags = {"git_sha": compute_git_sha(), "data_hash": compute_file_hash(data_path), "seed": str(seed)}
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
     with mlflow.start_run(run_name=name, tags=tags):
@@ -95,3 +104,4 @@ MLflow ≥ 3 uses `name=`; on 2.x use `artifact_path=`. Recent MLflow 3 releases
 | `log_model` without signature | `infer_signature` + `input_example` |
 | Same estimator object refit across folds | `clone(model)` per fold |
 | Uncommitted changes, run logged anyway | Raise on dirty tree |
+| Relying on the default `./mlruns` file store | `set_tracking_uri("sqlite:///mlruns/mlflow.db")`; UI: `mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db` |

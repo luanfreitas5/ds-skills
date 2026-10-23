@@ -1,12 +1,11 @@
 # syntax=docker/dockerfile:1.7
-# Servidor MLflow: a imagem oficial não traz o driver do Postgres e roda como root.
+# Servidor MLflow com backend SQLite (padrão do projeto); a imagem oficial roda como root.
 # Mantenha a versão igual à do mlflow no uv.lock (cliente e servidor compatíveis).
 FROM ghcr.io/mlflow/mlflow:v3.1.1
-# /mlartifacts é criado com o dono certo ANTES do volume: o volume nomeado herda a permissão
-RUN pip install --no-cache-dir psycopg2-binary==2.9.10 \
-    && groupadd --system --gid 10001 mlflow \
+# /mlflow é criado com o dono certo ANTES do volume: o volume nomeado herda a permissão
+RUN groupadd --system --gid 10001 mlflow \
     && useradd --system --uid 10001 --gid mlflow --no-create-home mlflow \
-    && mkdir -p /mlartifacts \
-    && chown mlflow:mlflow /mlartifacts
+    && mkdir -p /mlflow \
+    && chown mlflow:mlflow /mlflow
 USER mlflow:mlflow
 EXPOSE 5000

@@ -1,21 +1,7 @@
-# API + MLflow (tracking e registry) + Postgres (backend store).
+# API + MLflow (tracking e registry) com backend SQLite (sqlite:////mlflow/mlflow.db).
 # Segredos vêm do .env (nunca commitado); `docker compose config` valida o arquivo.
+# SQLite serve a uso local de uma pessoa; para uso compartilhado, troque por Postgres.
 services:
-  db:
-    image: postgres:16.4-bookworm
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:?defina POSTGRES_USER no .env}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
-      POSTGRES_DB: mlflow
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d mlflow"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-    restart: unless-stopped
-
   mlflow:
     build:
       context: .
@@ -25,18 +11,16 @@ services:
       - server
       - --host=0.0.0.0
       - --port=5000
-      - --backend-store-uri=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/mlflow
-      - --artifacts-destination=/mlartifacts
+      # 4 barras = caminho absoluto, dentro do volume nomeado
+      - --backend-store-uri=sqlite:////mlflow/mlflow.db
+      - --artifacts-destination=/mlflow/artifacts
       - --serve-artifacts
       # MLflow >= 3.5 valida o Host: inclua o nome do serviço ou a API recebe 403
       # - --allowed-hosts=mlflow:5000,localhost:5000
     volumes:
-      - mlartifacts:/mlartifacts
+      - mlflow_data:/mlflow
     ports:
       - "127.0.0.1:5000:5000" # só na máquina local; nunca 0.0.0.0 sem autenticação
-    depends_on:
-      db:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health', timeout=4)"]
       interval: 10s
@@ -67,5 +51,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  pgdata:
-  mlartifacts:
+  mlflow_data:

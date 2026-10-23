@@ -9,6 +9,10 @@ description: Use when registering a model in the MLflow Model Registry, promotin
 
 "Last run AUC 0.874 > production 0.869" compares two point estimates, often from different data, with no uncertainty and no check on who the model fails. **Core principle:** promotion is a gated decision. The challenger replaces the champion only when it wins on the **same** frozen evaluation set with a significant difference, passes fairness and documentation gates, and a one-command rollback exists.
 
+## Registry Backend
+
+The Registry needs a database backend: default `sqlite:///mlruns/mlflow.db` (`registry_uri` in `configs/deploy.yaml`), never the `./mlruns` file store. Pass the URI explicitly to `MlflowClient` instead of relying on the default.
+
 ## Aliases, not Stages
 
 MLflow stages (`Staging`/`Production`, `transition_model_version_stage`) are deprecated since 2.9. Use aliases:
@@ -55,12 +59,14 @@ def compute_paired_auc_gain_ci(
     return float(gain), float(low), float(high)
 
 
-def promote_challenger(name: str, version: str, gates: dict[str, bool]) -> None:
+def promote_challenger(
+    name: str, version: str, gates: dict[str, bool], tracking_uri: str = "sqlite:///mlruns/mlflow.db"
+) -> None:
     """Move o alias champion para a versão desafiante se todos os portões passarem."""
     failed = [gate for gate, ok in gates.items() if not ok]
     if failed:
         raise PermissionError(f"Promoção bloqueada; portões reprovados: {failed}")
-    client = MlflowClient()
+    client = MlflowClient(tracking_uri=tracking_uri, registry_uri=tracking_uri)
     current = client.get_model_version_by_alias(name, "champion")
     client.set_registered_model_alias(name, "previous-champion", current.version)
     client.set_registered_model_alias(name, "champion", version)
@@ -68,9 +74,9 @@ def promote_challenger(name: str, version: str, gates: dict[str, bool]) -> None:
         client.set_model_version_tag(name, version, f"gate_{gate}", "passed")
 
 
-def rollback_champion(name: str) -> None:
+def rollback_champion(name: str, tracking_uri: str = "sqlite:///mlruns/mlflow.db") -> None:
     """Restaura a versão anterior como champion (rollback em um comando)."""
-    client = MlflowClient()
+    client = MlflowClient(tracking_uri=tracking_uri, registry_uri=tracking_uri)
     previous = client.get_model_version_by_alias(name, "previous-champion")
     client.set_registered_model_alias(name, "champion", previous.version)
 ```
