@@ -4,7 +4,9 @@
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
-Cada skill foi escrita seguindo TDD para documentação: um cenário de pressão foi executado **sem** a skill (baseline), as falhas observadas guiaram o texto, e o mesmo cenário foi repetido **com** a skill para verificar a mudança de comportamento. Todos os trechos de código foram executados contra dados sintéticos.
+Cada skill foi escrita usando a skill [superpowers:writing-skills](https://github.com/obra/superpowers/tree/main/skills/writing-skills), seguindo TDD para documentação: um cenário de pressão foi executado **sem** a skill (baseline), as falhas observadas guiaram o texto, e o mesmo cenário foi repetido **com** a skill para verificar a mudança de comportamento. Todos os trechos de código foram executados contra dados sintéticos.
+
+![ds-skills](banner/skills.png)
 
 ## 📦 Skills
 
