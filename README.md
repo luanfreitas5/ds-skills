@@ -1,6 +1,6 @@
 # 🧪 ds-skills — Skills de Ciência de Dados para Claude Code
 
-![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-52-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-54-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
@@ -22,6 +22,7 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`building-rag-pipelines`](skills/building-rag-pipelines/SKILL.md) | Construir RAG ou Q&A sobre documentos; escolher chunk, embedding e top-k; avaliar só a resposta final |
 |  | [`handling-class-imbalance`](skills/handling-class-imbalance/SKILL.md) | Classe positiva rara (fraude, churn, doença); SMOTE proposto; acurácia ~0,99 em alvo raro; escolha de limiar |
 |  | [`backtesting-time-series`](skills/backtesting-time-series/SKILL.md) | Avaliar previsão temporal; KFold com shuffle em série; horizonte ou gap diferentes da produção |
+|  | [`forecasting-time-series`](skills/forecasting-time-series/SKILL.md) | Previsão com statsforecast, sktime ou Prophet; baseline sazonal; várias séries; intervalos de previsão; métrica em série com zeros |
 | Dados e reprodutibilidade | [`validating-data-contracts`](skills/validating-data-contracts/SKILL.md) | Funções que leem/limpam/gravam dados entre estágios |
 |  | [`ensuring-reproducibility`](skills/ensuring-reproducibility/SKILL.md) | Scripts de treino para artigo, revisão ou deploy |
 |  | [`building-point-in-time-features`](skills/building-point-in-time-features/SKILL.md) | Features de tabelas históricas para rótulos com data |
@@ -41,6 +42,7 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`labeling-with-llms`](skills/labeling-with-llms/SKILL.md) | Usar LLM para rotular dados ou gerar dados sintéticos; texto que pode conter dados pessoais |
 | MLOps e entrega | [`tracking-experiments-mlflow`](skills/tracking-experiments-mlflow/SKILL.md) | Treinar ou comparar modelos em script de experimento |
 |  | [`promoting-models-registry`](skills/promoting-models-registry/SKILL.md) | Registrar modelo ou promover para produção |
+|  | [`deploying-to-cloud`](skills/deploying-to-cloud/SKILL.md) | Treino ou deploy em SageMaker, Azure ML ou Vertex AI; permissões IAM; custo de endpoint ocioso; credenciais de nuvem |
 |  | [`serving-models-fastapi`](skills/serving-models-fastapi/SKILL.md) | Expor modelo como API |
 |  | [`serving-llms-vllm-ollama`](skills/serving-llms-vllm-ollama/SKILL.md) | Servir LLM local ou em GPU; quantização; Ollama em produção; estouro de VRAM; throughput × latência |
 |  | [`exporting-models-onnx`](skills/exporting-models-onnx/SKILL.md) | Exportar PyTorch ou scikit-learn para ONNX; reduzir latência ou tamanho; quantização int8; saídas divergentes após a exportação |
