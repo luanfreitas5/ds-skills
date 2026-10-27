@@ -1,6 +1,6 @@
 # 🧪 ds-skills — Skills de Ciência de Dados para Claude Code
 
-![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-48-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-52-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
@@ -42,10 +42,13 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 | MLOps e entrega | [`tracking-experiments-mlflow`](skills/tracking-experiments-mlflow/SKILL.md) | Treinar ou comparar modelos em script de experimento |
 |  | [`promoting-models-registry`](skills/promoting-models-registry/SKILL.md) | Registrar modelo ou promover para produção |
 |  | [`serving-models-fastapi`](skills/serving-models-fastapi/SKILL.md) | Expor modelo como API |
+|  | [`serving-llms-vllm-ollama`](skills/serving-llms-vllm-ollama/SKILL.md) | Servir LLM local ou em GPU; quantização; Ollama em produção; estouro de VRAM; throughput × latência |
+|  | [`exporting-models-onnx`](skills/exporting-models-onnx/SKILL.md) | Exportar PyTorch ou scikit-learn para ONNX; reduzir latência ou tamanho; quantização int8; saídas divergentes após a exportação |
 |  | [`building-streamlit-apps`](skills/building-streamlit-apps/SKILL.md) | Criar ou alterar dashboard Streamlit |
 |  | [`plotting-publication-figures`](skills/plotting-publication-figures/SKILL.md) | Gráficos para relatório, artigo ou README |
 |  | [`writing-ds-pull-requests`](skills/writing-ds-pull-requests/SKILL.md) | Abrir PR que muda dados, features ou modelo; "métricas depois" |
 |  | [`versioning-prompts`](skills/versioning-prompts/SKILL.md) | Prompt em produção muda com frequência; ajuste "de uma linha"; saída sem versão do prompt |
+|  | [`tracing-llm-apps`](skills/tracing-llm-apps/SKILL.md) | App com LLM em produção sem visibilidade de custo e latência; depurar resposta ruim; comparar versões de prompt |
 |  | [`containerizing-ml-apps`](skills/containerizing-ml-apps/SKILL.md) | Dockerfile ou docker-compose para app, API ou MLflow; imagem grande, root ou modelo dentro da imagem |
 | Engenharia do projeto | [`scaffolding-ds-projects`](skills/scaffolding-ds-projects/SKILL.md) | Novo projeto, `pyproject.toml`, pre-commit, CI |
 |  | [`testing-ml-code`](skills/testing-ml-code/SKILL.md) | Testes de transformações e modelos treinados |
