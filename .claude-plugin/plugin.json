@@ -7,5 +7,5 @@
     "email": "luan.mgf@gmail.com"
   },
   "license": "MIT",
-  "keywords": ["data-science", "machine-learning", "mlops", "responsible-ai", "lgpd"]
+  "keywords": ["data-science", "machine-learning", "mlops", "responsible-ai", "lgpd", "llm-agents", "prompt-injection"]
 }

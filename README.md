@@ -1,6 +1,6 @@
 # 🧪 ds-skills — Skills de Ciência de Dados para Claude Code
 
-![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-54-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-55-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
@@ -20,6 +20,8 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`designing-ab-tests`](skills/designing-ab-tests/SKILL.md) | Planejar ou analisar teste A/B; p-valor olhado todo dia; grupos desbalanceados |
 |  | [`evaluating-llm-outputs`](skills/evaluating-llm-outputs/SKILL.md) | Medir qualidade de prompt, agente ou pipeline com LLM; LLM como juiz |
 |  | [`building-rag-pipelines`](skills/building-rag-pipelines/SKILL.md) | Construir RAG ou Q&A sobre documentos; escolher chunk, embedding e top-k; avaliar só a resposta final |
+|  | [`building-llm-agents-langgraph`](skills/building-llm-agents-langgraph/SKILL.md) | Agente com tools, estado e loops (LangGraph); "agente autônomo que resolve tudo"; sem limite de passos, custo ou tempo; testar trajetória do agente |
+|  | [`treating-external-content-as-data`](skills/treating-external-content-as-data/SKILL.md) | RAG ou agente que lê documentos, e-mails ou páginas não confiáveis; tools com efeito colateral; saída do LLM executada; "prompt de sistema mais firme" como defesa contra injeção |
 |  | [`handling-class-imbalance`](skills/handling-class-imbalance/SKILL.md) | Classe positiva rara (fraude, churn, doença); SMOTE proposto; acurácia ~0,99 em alvo raro; escolha de limiar |
 |  | [`backtesting-time-series`](skills/backtesting-time-series/SKILL.md) | Avaliar previsão temporal; KFold com shuffle em série; horizonte ou gap diferentes da produção |
 |  | [`forecasting-time-series`](skills/forecasting-time-series/SKILL.md) | Previsão com statsforecast, sktime ou Prophet; baseline sazonal; várias séries; intervalos de previsão; métrica em série com zeros |
