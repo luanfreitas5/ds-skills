@@ -1,6 +1,6 @@
 # 🧪 ds-skills — Skills de Ciência de Dados para Claude Code
 
-![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-55-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-57-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
@@ -22,6 +22,8 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`building-rag-pipelines`](skills/building-rag-pipelines/SKILL.md) | Construir RAG ou Q&A sobre documentos; escolher chunk, embedding e top-k; avaliar só a resposta final |
 |  | [`building-llm-agents-langgraph`](skills/building-llm-agents-langgraph/SKILL.md) | Agente com tools, estado e loops (LangGraph); "agente autônomo que resolve tudo"; sem limite de passos, custo ou tempo; testar trajetória do agente |
 |  | [`treating-external-content-as-data`](skills/treating-external-content-as-data/SKILL.md) | RAG ou agente que lê documentos, e-mails ou páginas não confiáveis; tools com efeito colateral; saída do LLM executada; "prompt de sistema mais firme" como defesa contra injeção |
+|  | [`building-nlp-classifiers-ptbr`](skills/building-nlp-classifiers-ptbr/SKILL.md) | Classificar texto de redes sociais em pt-BR; rótulos de dois ou mais anotadores; gírias, emojis e erros de grafia; "limpar" removendo emojis e stopwords; escolher entre TF-IDF e Transformer |
+|  | [`fine-tuning-transformers-hf`](skills/fine-tuning-transformers-hf/SKILL.md) | Fine-tuning de BERT/RoBERTa/LLM com transformers, peft (LoRA, QLoRA) ou trl; "treinar mais épocas"; reportar o F1 do melhor checkpoint; teste usado como `eval_dataset` |
 |  | [`handling-class-imbalance`](skills/handling-class-imbalance/SKILL.md) | Classe positiva rara (fraude, churn, doença); SMOTE proposto; acurácia ~0,99 em alvo raro; escolha de limiar |
 |  | [`backtesting-time-series`](skills/backtesting-time-series/SKILL.md) | Avaliar previsão temporal; KFold com shuffle em série; horizonte ou gap diferentes da produção |
 |  | [`forecasting-time-series`](skills/forecasting-time-series/SKILL.md) | Previsão com statsforecast, sktime ou Prophet; baseline sazonal; várias séries; intervalos de previsão; métrica em série com zeros |
