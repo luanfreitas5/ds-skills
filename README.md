@@ -1,6 +1,6 @@
 # 🧪 ds-skills — Skills de Ciência de Dados para Claude Code
 
-![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-57-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-61-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
@@ -25,6 +25,7 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`building-nlp-classifiers-ptbr`](skills/building-nlp-classifiers-ptbr/SKILL.md) | Classificar texto de redes sociais em pt-BR; rótulos de dois ou mais anotadores; gírias, emojis e erros de grafia; "limpar" removendo emojis e stopwords; escolher entre TF-IDF e Transformer |
 |  | [`fine-tuning-transformers-hf`](skills/fine-tuning-transformers-hf/SKILL.md) | Fine-tuning de BERT/RoBERTa/LLM com transformers, peft (LoRA, QLoRA) ou trl; "treinar mais épocas"; reportar o F1 do melhor checkpoint; teste usado como `eval_dataset` |
 |  | [`handling-class-imbalance`](skills/handling-class-imbalance/SKILL.md) | Classe positiva rara (fraude, churn, doença); SMOTE proposto; acurácia ~0,99 em alvo raro; escolha de limiar |
+|  | [`training-gradient-boosting`](skills/training-gradient-boosting/SKILL.md) | LightGBM, XGBoost ou CatBoost em dados tabulares; early stopping no mesmo conjunto que reporta a métrica; target encoding antes do split; one-hot em categórica de alta cardinalidade; refit com a melhor iteração |
 |  | [`backtesting-time-series`](skills/backtesting-time-series/SKILL.md) | Avaliar previsão temporal; KFold com shuffle em série; horizonte ou gap diferentes da produção |
 |  | [`forecasting-time-series`](skills/forecasting-time-series/SKILL.md) | Previsão com statsforecast, sktime ou Prophet; baseline sazonal; várias séries; intervalos de previsão; métrica em série com zeros |
 | Dados e reprodutibilidade | [`validating-data-contracts`](skills/validating-data-contracts/SKILL.md) | Funções que leem/limpam/gravam dados entre estágios |
@@ -39,6 +40,8 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`optimizing-sql-queries`](skills/optimizing-sql-queries/SKILL.md) | Consulta lenta ou cara no warehouse; antes de criar índice, partição ou clustering |
 |  | [`querying-with-duckdb`](skills/querying-with-duckdb/SKILL.md) | Análise local sobre Parquet/CSV grandes; pandas não cabe na memória; DuckDB × polars lazy |
 |  | [`profiling-data-pipelines`](skills/profiling-data-pipelines/SKILL.md) | Pipeline lento ou estourando memória, antes de otimizar; "reescrever em polars" ou paralelizar sem medir |
+|  | [`writing-pyspark`](skills/writing-pyspark/SKILL.md) | Job PySpark lento ou com skew; dados maiores que uma máquina; UDF Python linha a linha; `collect()` ou `toPandas()` em tabela grande; "mais executores" sem medir |
+|  | [`orchestrating-pipelines`](skills/orchestrating-pipelines/SKILL.md) | Cron chamando um script; reexecução duplica linhas ou sobrescreve `data/raw`; falha silenciosa; backfill; Prefect, Dagster ou Airflow |
 | IA responsável | [`auditing-fairness`](skills/auditing-fairness/SKILL.md) | Modelos que afetam pessoas; atributos sensíveis |
 |  | [`writing-model-cards-datasheets`](skills/writing-model-cards-datasheets/SKILL.md) | Documentar modelos e datasets |
 |  | [`protecting-pii-lgpd`](skills/protecting-pii-lgpd/SKILL.md) | Dados pessoais em logs, exports, relatórios |
@@ -55,6 +58,7 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`writing-ds-pull-requests`](skills/writing-ds-pull-requests/SKILL.md) | Abrir PR que muda dados, features ou modelo; "métricas depois" |
 |  | [`versioning-prompts`](skills/versioning-prompts/SKILL.md) | Prompt em produção muda com frequência; ajuste "de uma linha"; saída sem versão do prompt |
 |  | [`tracing-llm-apps`](skills/tracing-llm-apps/SKILL.md) | App com LLM em produção sem visibilidade de custo e latência; depurar resposta ruim; comparar versões de prompt |
+|  | [`building-n8n-workflows`](skills/building-n8n-workflows/SKILL.md) | Workflow N8N com LLM, webhooks e agendamentos; chaves coladas nos nós; reexecução que reenvia e-mails; ramo de erro "desnecessário" |
 |  | [`containerizing-ml-apps`](skills/containerizing-ml-apps/SKILL.md) | Dockerfile ou docker-compose para app, API ou MLflow; imagem grande, root ou modelo dentro da imagem |
 | Engenharia do projeto | [`scaffolding-ds-projects`](skills/scaffolding-ds-projects/SKILL.md) | Novo projeto, `pyproject.toml`, pre-commit, CI |
 |  | [`testing-ml-code`](skills/testing-ml-code/SKILL.md) | Testes de transformações e modelos treinados |
