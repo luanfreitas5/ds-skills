@@ -1,6 +1,6 @@
 # 🧪 ds-skills — Skills de Ciência de Dados para Claude Code
 
-![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-61-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-63-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
@@ -18,6 +18,7 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`tuning-hyperparameters-optuna`](skills/tuning-hyperparameters-optuna/SKILL.md) | Ajuste de hiperparâmetros; melhor score da busca reportado como desempenho |
 |  | [`explaining-models-shap`](skills/explaining-models-shap/SKILL.md) | Explicar previsões ou importância de features; features correlacionadas |
 |  | [`designing-ab-tests`](skills/designing-ab-tests/SKILL.md) | Planejar ou analisar teste A/B; p-valor olhado todo dia; grupos desbalanceados |
+|  | [`estimating-treatment-effects`](skills/estimating-treatment-effects/SKILL.md) | Efeito de campanha ou benefício sem experimento aleatorizado; "a correlação mostra que funcionou"; regressão com todas as variáveis, inclusive pós-tratamento; propensity score, DoWhy, econml, diff-in-diff |
 |  | [`evaluating-llm-outputs`](skills/evaluating-llm-outputs/SKILL.md) | Medir qualidade de prompt, agente ou pipeline com LLM; LLM como juiz |
 |  | [`building-rag-pipelines`](skills/building-rag-pipelines/SKILL.md) | Construir RAG ou Q&A sobre documentos; escolher chunk, embedding e top-k; avaliar só a resposta final |
 |  | [`building-llm-agents-langgraph`](skills/building-llm-agents-langgraph/SKILL.md) | Agente com tools, estado e loops (LangGraph); "agente autônomo que resolve tudo"; sem limite de passos, custo ou tempo; testar trajetória do agente |
@@ -25,6 +26,7 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`building-nlp-classifiers-ptbr`](skills/building-nlp-classifiers-ptbr/SKILL.md) | Classificar texto de redes sociais em pt-BR; rótulos de dois ou mais anotadores; gírias, emojis e erros de grafia; "limpar" removendo emojis e stopwords; escolher entre TF-IDF e Transformer |
 |  | [`fine-tuning-transformers-hf`](skills/fine-tuning-transformers-hf/SKILL.md) | Fine-tuning de BERT/RoBERTa/LLM com transformers, peft (LoRA, QLoRA) ou trl; "treinar mais épocas"; reportar o F1 do melhor checkpoint; teste usado como `eval_dataset` |
 |  | [`handling-class-imbalance`](skills/handling-class-imbalance/SKILL.md) | Classe positiva rara (fraude, churn, doença); SMOTE proposto; acurácia ~0,99 em alvo raro; escolha de limiar |
+|  | [`checking-probability-calibration`](skills/checking-probability-calibration/SKILL.md) | Probabilidades usadas para escolher limiar ou precificar risco; "score 0,30 = 30% de chance"; curva de calibração e Brier; Platt × isotonic; predição conformal |
 |  | [`training-gradient-boosting`](skills/training-gradient-boosting/SKILL.md) | LightGBM, XGBoost ou CatBoost em dados tabulares; early stopping no mesmo conjunto que reporta a métrica; target encoding antes do split; one-hot em categórica de alta cardinalidade; refit com a melhor iteração |
 |  | [`backtesting-time-series`](skills/backtesting-time-series/SKILL.md) | Avaliar previsão temporal; KFold com shuffle em série; horizonte ou gap diferentes da produção |
 |  | [`forecasting-time-series`](skills/forecasting-time-series/SKILL.md) | Previsão com statsforecast, sktime ou Prophet; baseline sazonal; várias séries; intervalos de previsão; métrica em série com zeros |
