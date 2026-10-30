@@ -1,6 +1,6 @@
 # 🧪 ds-skills — Skills de Ciência de Dados para Claude Code
 
-![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-63-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-68-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
@@ -30,6 +30,11 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`training-gradient-boosting`](skills/training-gradient-boosting/SKILL.md) | LightGBM, XGBoost ou CatBoost em dados tabulares; early stopping no mesmo conjunto que reporta a métrica; target encoding antes do split; one-hot em categórica de alta cardinalidade; refit com a melhor iteração |
 |  | [`backtesting-time-series`](skills/backtesting-time-series/SKILL.md) | Avaliar previsão temporal; KFold com shuffle em série; horizonte ou gap diferentes da produção |
 |  | [`forecasting-time-series`](skills/forecasting-time-series/SKILL.md) | Previsão com statsforecast, sktime ou Prophet; baseline sazonal; várias séries; intervalos de previsão; métrica em série com zeros |
+|  | [`splitting-recsys-data`](skills/splitting-recsys-data/SKILL.md) | Split de interações para recomendador; split temporal por usuário ou leave-last-out; cold start de usuário e de item; filtro de mínimo de interações; embeddings treinados com interações futuras |
+|  | [`evaluating-recommenders-offline`](skills/evaluating-recommenders-offline/SKILL.md) | Reportar NDCG@k, MAP ou recall@k; comparar recomendadores; split aleatório em dados com timestamp; sem baseline de popularidade; negativos amostrados (RecBole, implicit, recommenders) |
+|  | [`auditing-recsys-bias`](skills/auditing-recsys-bias/SKILL.md) | Viés de popularidade; loop de feedback; diversidade, novidade e cobertura; exposição de itens ou grupos; "o NDCG subiu, pode publicar" |
+|  | [`splitting-image-datasets`](skills/splitting-image-datasets/SKILL.md) | Vários frames ou recortes do mesmo paciente, objeto ou cena; imagens duplicadas ou quase idênticas; GroupKFold; acurácia suspeitosamente alta |
+|  | [`evaluating-detection-segmentation`](skills/evaluating-detection-segmentation/SKILL.md) | mAP, IoU, Dice; limiar de confiança; classes raras e objetos pequenos; reportar só acurácia em detecção ou segmentação (ultralytics, torchmetrics, pycocotools) |
 | Dados e reprodutibilidade | [`validating-data-contracts`](skills/validating-data-contracts/SKILL.md) | Funções que leem/limpam/gravam dados entre estágios |
 |  | [`ensuring-reproducibility`](skills/ensuring-reproducibility/SKILL.md) | Scripts de treino para artigo, revisão ou deploy |
 |  | [`building-point-in-time-features`](skills/building-point-in-time-features/SKILL.md) | Features de tabelas históricas para rótulos com data |
