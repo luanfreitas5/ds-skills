@@ -1,6 +1,6 @@
 # 🧪 ds-skills — Skills de Ciência de Dados para Claude Code
 
-![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-73-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-78-blue) ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 Coleção de skills que levam agentes de IA ao padrão de um cientista de dados sênior: avaliação estatisticamente correta, dados validados, resultados reprodutíveis e IA responsável (LGPD, fairness, documentação).
 
@@ -36,10 +36,15 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`building-recsys-baselines`](skills/building-recsys-baselines/SKILL.md) | Início de projeto de recomendação; "já vou usar deep learning"; baselines de popularidade, co-ocorrência, itemKNN e ALS (implicit, LightFM, Surprise); comparar só com a versão anterior do modelo |
 |  | [`handling-implicit-feedback`](skills/handling-implicit-feedback/SKILL.md) | Recomendador com cliques, views, compras ou plays sem nota; eventos mapeados para notas falsas; itens sem interação preenchidos com 0; regressão com MSE/RMSE em cliques; negativos amostrados; pesos de confiança do ALS |
 |  | [`building-two-tower-retrieval`](skills/building-two-tower-retrieval/SKILL.md) | Modelo de ranking pesado sobre milhões de itens; embeddings de usuário e item para recuperação de candidatos; FAISS ou Qdrant, flat × HNSW/IVF; recall@K da etapa de retrieval; embeddings de item nunca atualizados |
+|  | [`testing-recsys-online`](skills/testing-recsys-online/SKILL.md) | Validar em produção um ganho offline de NDCG/recall; "lançar para 100%"; A/B randomizado por sessão; CTR da lista inteira ignorando posição; interleaving |
 |  | [`splitting-image-datasets`](skills/splitting-image-datasets/SKILL.md) | Vários frames ou recortes do mesmo paciente, objeto ou cena; imagens duplicadas ou quase idênticas; GroupKFold; acurácia suspeitosamente alta |
 |  | [`evaluating-detection-segmentation`](skills/evaluating-detection-segmentation/SKILL.md) | mAP, IoU, Dice; limiar de confiança; classes raras e objetos pequenos; reportar só acurácia em detecção ou segmentação (ultralytics, torchmetrics, pycocotools) |
 |  | [`fine-tuning-vision-models`](skills/fine-tuning-vision-models/SKILL.md) | Fine-tuning ou transfer learning com backbone de visão pré-treinado (torchvision, timm) em dataset pequeno; CNN do zero com poucas imagens; congelar e descongelar camadas; taxa de aprendizado única; sem baseline de extração de features |
 |  | [`explaining-vision-models`](skills/explaining-vision-models/SKILL.md) | Grad-CAM, saliency ou atenção mostrados como prova de que o modelo aprendeu certo; mapa acende em canto, marca ou texto; AUC alto em imagem médica indo para piloto; legendas de heatmap (pytorch-grad-cam, captum) |
+|  | [`augmenting-images-safely`](skills/augmenting-images-safely/SKILL.md) | Augmentation (Albumentations, torchvision v2); flip em dígitos, texto ou lateralidade; mesma transformação em treino e validação; MixUp/CutMix; crop que remove o objeto |
+|  | [`labeling-images-with-quality-control`](skills/labeling-images-with-quality-control/SKILL.md) | Anotação manual (Label Studio) ou por modelo; um só anotador; sem guia de rótulos nem amostra dupla; concordância entre anotadores; ruído de rótulo (cleanlab) |
+|  | [`serving-vision-models`](skills/serving-vision-models/SKILL.md) | API de classificador ou detector (FastAPI, ONNX Runtime, Triton); resize cv2 × PIL; upload sem limite; modelo carregado por requisição; latência e batch |
+|  | [`building-multimodal-pipelines`](skills/building-multimodal-pipelines/SKILL.md) | CLIP ou SigLIP zero-shot e busca imagem-texto; VLM como rotulador; nomes de classe usados como prompt; "validado" com poucos exemplos escolhidos a dedo |
 | Dados e reprodutibilidade | [`validating-data-contracts`](skills/validating-data-contracts/SKILL.md) | Funções que leem/limpam/gravam dados entre estágios |
 |  | [`ensuring-reproducibility`](skills/ensuring-reproducibility/SKILL.md) | Scripts de treino para artigo, revisão ou deploy |
 |  | [`building-point-in-time-features`](skills/building-point-in-time-features/SKILL.md) | Features de tabelas históricas para rótulos com data |
