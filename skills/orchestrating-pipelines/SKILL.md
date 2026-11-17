@@ -1,13 +1,13 @@
 ---
 name: orchestrating-pipelines
-description: Use when a cron job runs a script that downloads or builds data on a schedule, when rerunning a job duplicates rows or overwrites data/raw, when a failed run goes unnoticed, when missed days cannot be rebuilt (backfill), or when choosing between cron, Prefect, Dagster and Airflow for step dependencies and retries.
+description: Use when a cron job runs a script that downloads or builds data on a schedule, when rerunning a job duplicates rows or overwrites data/bronze, when a failed run goes unnoticed, when missed days cannot be rebuilt (backfill), or when choosing between cron, Prefect, Dagster and Airflow for step dependencies and retries.
 ---
 
 # Orchestrating Pipelines
 
 ## Overview
 
-A scheduled pipeline fails in four ways: **reruns change the result** (appends, overwritten raw files), **failures are silent**, **outages cannot be replayed**, and **step B starts when step A failed** (two crons 30 minutes apart). **Core principle:** every task is a pure function of its *logical date* that writes one partition, so rerun, retry and backfill are the same operation. A deadline, a sunk cost, or "no new dependencies" changes the *tool*, never these four properties.
+A scheduled pipeline fails in four ways: **reruns change the result** (appends, overwritten bronze files), **failures are silent**, **outages cannot be replayed**, and **step B starts when step A failed** (two crons 30 minutes apart). **Core principle:** every task is a pure function of its *logical date* that writes one partition, so rerun, retry and backfill are the same operation. A deadline, a sunk cost, or "no new dependencies" changes the *tool*, never these four properties.
 
 Docs verified 2026-10-28: Airflow 3.3.2 (`from airflow.sdk import dag, task`; backfill flags `--from-date/--to-date/--reprocess-behavior` in 3.2+, `--start-date/--end-date` in 3.1), Dagster daily partitions + `RetryPolicy`, Prefect 3 `@flow`/`@task(retries=)`. Snippets run on synthetic data with `prefect` 3.9.0, `dagster` 1.13.27, `pandas` 3.1.0, `pyarrow` 26.0.0 (pytest idempotency + missing-day tests, a forced task failure retried by Prefect, a Dagster partition materialized); the Airflow snippet was not executed locally (Airflow does not install on Windows).
 
@@ -16,7 +16,7 @@ Docs verified 2026-10-28: Airflow 3.3.2 (`from airflow.sdk import dag, task`; ba
 | Rule | How |
 |---|---|
 | Key every run by logical date | `--date YYYY-MM-DD` / flow parameter / partition key. Never `date.today()` inside a task body |
-| Bronze is append-only snapshots | **REQUIRED SUB-SKILL:** `ingesting-external-data` (dated snapshot + manifest; never overwrite `data/raw` or `data/bronze`) |
+| Bronze is append-only snapshots | **REQUIRED SUB-SKILL:** `ingesting-external-data` (dated snapshot + manifest; never overwrite `data/bronze`) |
 | Downstream writes replace one partition | `dt=YYYY-MM-DD/part.parquet` via `.tmp` + `os.replace`. Never `append` to a CSV. Dedupe by a **verified** unique key, never a guessed one (it silently drops real rows) |
 | Retry transient errors only | Bounded count, exponential backoff, catch specific exceptions (timeouts, 5xx). A 4xx or a schema error fails immediately |
 | Fail loudly | Non-zero exit, a log line in pt-BR with the logical date, and an alert **plus** a dead-man's-switch (healthchecks.io style) for "the job never ran". **REQUIRED SUB-SKILL:** `setting-up-project-logging` |
@@ -69,8 +69,8 @@ def pull_day(day: date) -> pd.DataFrame:
 def daily_sales(logical_date: date | None = None, lookback: int = 7) -> None:
     """Preenche os dias faltantes dos últimos `lookback` dias."""
     end = logical_date or date.today() - timedelta(days=1)
-    for day in list_missing_days(RAW, end - timedelta(days=lookback - 1), end):
-        write_partition(pull_day(day), RAW, day)
+    for day in list_missing_days(BRONZE, end - timedelta(days=lookback - 1), end):
+        write_partition(pull_day(day), BRONZE, day)
 
 # daily_sales.serve(name="vendas-diarias", cron="0 6 * * *")
 ```
@@ -95,7 +95,7 @@ Airflow 3 (not executed locally): `@dag(schedule="@daily", start_date=..., catch
 | "Tech lead said no orchestrator, so no retries/backfill machinery" | The ban is on a tool, not on idempotency, alerts or catch-up. Do them in the script and write the migrate triggers |
 | "I agree at this size / good enough for now" | Agreeing is how the first outage went unnoticed. List what is skipped, with an owner and date |
 | "A bare `curl` to Slack is the alert" | It cannot fire when the VM or cron is down. Add a dead-man's-switch ping |
-| "Dedupe on the likely key" | An unverified key drops real sales silently. Check uniqueness on the raw data first |
+| "Dedupe on the likely key" | An unverified key drops real sales silently. Check uniqueness on the bronze data first |
 | "Overwrite today's `sales.csv`, it is atomic" | Atomic replace prevents partial files, not loss of last week's snapshot |
 | "Logging/alert polish and the test suite can wait; only idempotency now" | Fine to defer *polish*, not the four properties: a loud failure signal, the contract and the two tests ship today. Everything deferred gets an owner and a date in the ticket |
 | "pandera is a new dependency; the tech lead said none" | A 15-line check (columns, dtypes, key unique, rows > 0) is no dependency and still raises |

@@ -39,7 +39,7 @@ Cada skill foi escrita usando a skill [superpowers:writing-skills](https://githu
 |  | [`versioning-data-with-dvc`](skills/versioning-data-with-dvc/SKILL.md) | Versionar dados/modelos; alguém quer commitar `.parquet` ou `.joblib` |
 |  | [`profiling-data-pipelines`](skills/profiling-data-pipelines/SKILL.md) | Pipeline lento ou estourando memória, antes de otimizar; "reescrever em polars" ou paralelizar sem medir |
 |  | [`writing-pyspark`](skills/writing-pyspark/SKILL.md) | Job PySpark lento ou com skew; dados maiores que uma máquina; UDF Python linha a linha; `collect()` ou `toPandas()` em tabela grande; "mais executores" sem medir |
-| **⚙️ Orquestração e automação** | [`orchestrating-pipelines`](skills/orchestrating-pipelines/SKILL.md) | Cron chamando um script; reexecução duplica linhas ou sobrescreve `data/raw`; falha silenciosa; backfill; Prefect, Dagster ou Airflow |
+| **⚙️ Orquestração e automação** | [`orchestrating-pipelines`](skills/orchestrating-pipelines/SKILL.md) | Cron chamando um script; reexecução duplica linhas ou sobrescreve `data/bronze`; falha silenciosa; backfill; Prefect, Dagster ou Airflow |
 |  | [`building-n8n-workflows`](skills/building-n8n-workflows/SKILL.md) | Workflow N8N com LLM, webhooks e agendamentos; chaves coladas nos nós; reexecução que reenvia e-mails; ramo de erro "desnecessário" |
 | **📊 Visualização** | [`plotting-publication-figures`](skills/plotting-publication-figures/SKILL.md) | Gráficos para relatório, artigo ou README |
 |  | [`building-streamlit-apps`](skills/building-streamlit-apps/SKILL.md) | Criar ou alterar dashboard Streamlit |
